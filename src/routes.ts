@@ -9,4 +9,4 @@ router.get('/', (request: Request, response: Response) => {
     return response.json({ message: 'Welcome to my aplication' });
 });
 
-router.get('/users', createUserController.handle)
+router.post('/users', createUserController.handle)
