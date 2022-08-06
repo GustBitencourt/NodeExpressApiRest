@@ -9,11 +9,11 @@ import { makeMockResponse } from '../utils/mocks/makeMockResponse';
 describe('CreateUserController', () => {
     beforeAll(async () => {
         const connection = await createConnection();
-        connection.runMigrations();
+        await connection.runMigrations();
     })
 
     afterAll(async () => {
-        const connection = await getConnection();
+        const connection = getConnection();
 
         //apaga dados do banco teste
         await connection.query('DELETE FROM usuarios');
