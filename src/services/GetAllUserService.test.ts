@@ -1,8 +1,9 @@
 import { GetAllUserService } from "./GetAllUserService";
-import { CreateUserService } from "./CreateUserService";
 import createConnection from "../database";
 import { getConnection } from "typeorm";
-import { v4 as uuid } from "uuid";
+
+import { FakeData } from './../utils/mocks/fakeData/fakeData';
+
 
 describe("GetAllUserService", () => {
   beforeAll(async () => {
@@ -18,20 +19,11 @@ describe("GetAllUserService", () => {
     await connection.close();
   });
 
-  const createUserService = new CreateUserService();
+  const fakeData = new FakeData();  
 
   it("Deve retornar todos os usuários cadastrados", async () => {
-    await createUserService.execute({
-      id: uuid(),
-      name: "Teste",
-      email: "email@email.com",
-    });
-    await createUserService.execute({
-      id: uuid(),
-      name: "Teste2",
-      email: "email2@email.com",
-    });
-
+    await fakeData.execute();
+    
     const expectedResponse = [
       {
         name: "Teste",
