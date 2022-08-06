@@ -1,10 +1,67 @@
 import { CreateUserController } from './CreateUserController';
-describe('CreateUserController', () => {
-    
-    it('Deve retornar o ID do usuário criado: ', () => {
-        const createUseController = new CreateUserController();
+import { Request } from 'express';
+import { getConnection } from 'typeorm';
 
-        const result = createUseController.handle()
+import createConnection from '../database';
+import { makeMockResponse } from '../utils/mocks/makeMockResponse';
+
+
+describe('CreateUserController', () => {
+    beforeAll(async () => {
+        const connection = await createConnection();
+        connection.runMigrations();
+    })
+
+    afterAll(async () => {
+        const connection = await getConnection();
+
+        //apaga dados do banco teste
+        await connection.query('DELETE FROM usuarios');
+        await connection.close();
+    })
+
+    const createUseController = new CreateUserController();
+    
+    const response = makeMockResponse();
+
+    it('Deve retornar o status 201 quando o usuário for criado: ', async () => {
+        const request = {
+            body: {
+                name: 'Teste',
+                email: 'email@email.com'
+            }
+        } as Request;
+
+
+        await createUseController.handle(request, response);        
         
+        expect(response.state.status).toBe(201);        
+    })
+
+    it('Deve retornar o status 201 quando o usuário for criado com o email vazio: ', async () => {
+        const request = {
+            body: {
+                name: 'Teste',
+                email: ''
+            }
+        } as Request;
+
+
+        await createUseController.handle(request, response);        
+        
+        expect(response.state.status).toBe(201);        
+    })
+
+    it('Deve retornar o status 400 quando o usuário não for criado: ', async () => {
+        const request = {
+            body: {
+                name: '',
+                email: '',
+            }
+        } as Request;
+
+        await createUseController.handle(request, response);
+
+        expect(response.state.status).toBe(400);
     })
 })
